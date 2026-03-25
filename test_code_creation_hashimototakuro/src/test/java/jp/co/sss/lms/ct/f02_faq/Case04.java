@@ -99,14 +99,14 @@ public class Case04 {
 	@Order(4)
 	@DisplayName("テスト04 「よくある質問」リンクからよくある質問画面を別タブに開く")
 	void test04() {
-		//元タブを保存
+		// 元タブを保存
 		String helpTab = webDriver.getWindowHandle();
 
 		// 「よくある質問」リンクを押下
 		WebElement faqLink = webDriver.findElement(By.linkText("よくある質問"));
 		faqLink.click();
 
-		//新しいタブに切り替える
+		// 新しいタブに切り替える
 		for (String faqTab : webDriver.getWindowHandles()) {
 			if (!faqTab.equals(helpTab)) {
 				webDriver.switchTo().window(faqTab);
