@@ -1,6 +1,9 @@
 package jp.co.sss.lms.ct.f03_report;
 
 import static jp.co.sss.lms.ct.util.WebDriverUtils.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -9,6 +12,8 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 
 /**
  * 結合テスト レポート機能
@@ -35,35 +40,106 @@ public class Case07 {
 	@Order(1)
 	@DisplayName("テスト01 トップページURLでアクセス")
 	void test01() {
-		// TODO ここに追加
+		// ログイン画面を開く
+		goTo("http://localhost:8080/lms/");
+
+		// タイトルの検証
+		assertEquals("ログイン | LMS", webDriver.getTitle());
+
+		// 開いたページのキャプチャを保存する
+		getEvidence(new Object() {
+		});
 	}
 
 	@Test
 	@Order(2)
 	@DisplayName("テスト02 初回ログイン済みの受講生ユーザーでログイン")
 	void test02() {
-		// TODO ここに追加
+		// ログインIDを入力する
+		WebElement loginId = webDriver.findElement(By.name("loginId"));
+		loginId.clear();
+		loginId.sendKeys("StudentAA01");
+
+		// パスワードを入力する
+		WebElement password = webDriver.findElement(By.name("password"));
+		password.clear();
+		password.sendKeys("StudentAA011");
+
+		// ログインボタンを押下
+		WebElement loginButton = webDriver.findElement(By.className("btn-primary"));
+		loginButton.click();
+
+		// タイトルの検証
+		assertEquals("コース詳細 | LMS", webDriver.getTitle());
+
+		// 開いたページのキャプチャを保存する
+		getEvidence(new Object() {
+		});
 	}
 
 	@Test
 	@Order(3)
 	@DisplayName("テスト03 未提出の研修日の「詳細」ボタンを押下しセクション詳細画面に遷移")
 	void test03() {
-		// TODO ここに追加
+		// 初回トリガー
+		scrollTo("200");
+
+		for (int i = 0; i < 20; i++) {
+
+			List<WebElement> buttons = webDriver.findElements(
+					By.xpath("//tr[.//span[contains(text(),'未提出')]]//input[@value='詳細']"));
+
+			if (!buttons.isEmpty()) {
+				buttons.get(0).click();
+				break;
+			}
+
+			scrollTo("200");
+		}
+		// タイトルの検証
+		assertEquals("セクション詳細 | LMS", webDriver.getTitle());
+
+		// スクショ
+		getEvidence(new Object() {
+		});
 	}
 
 	@Test
 	@Order(4)
 	@DisplayName("テスト04 「提出する」ボタンを押下しレポート登録画面に遷移")
 	void test04() {
-		// TODO ここに追加
+		// 日報【デモ】を提出するボタンを押下
+		WebElement reportButton = webDriver.findElement(
+				By.cssSelector("input[value='日報【デモ】を提出する']"));
+		reportButton.click();
+
+		// タイトルの検証
+		assertEquals("レポート登録 | LMS", webDriver.getTitle());
+
+		// スクショ
+		getEvidence(new Object() {
+		});
 	}
 
 	@Test
 	@Order(5)
 	@DisplayName("テスト05 報告内容を入力して「提出する」ボタンを押下し確認ボタン名が更新される")
 	void test05() {
-		// TODO ここに追加
+		// 報告内容を入力する
+		WebElement reportText = webDriver.findElement(By.id("content_0"));
+		reportText.clear();
+		reportText.sendKeys("日報提出テスト");
+
+		WebElement submit = webDriver.findElement(By.xpath("//button[text()='提出する']"));
+		submit.click();
+
+		// セクション詳細画面の提出ボタンの表記が変わっているか確認
+		WebElement dayReport = webDriver.findElement(By.xpath("//input[@value='提出済み日報【デモ】を確認する']"));
+		assertEquals("提出済み日報【デモ】を確認する", dayReport.getAttribute("value"));
+
+		// スクショ
+		getEvidence(new Object() {
+		});
 	}
 
 }
